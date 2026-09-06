@@ -7,13 +7,14 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { listAllKeys, type CatalogStore } from "./catalog";
+import { signExpiresSeconds } from "./expires";
 
 export function createR2Store(
   env: Record<string, string | undefined>,
 ): CatalogStore {
   const accountId = env.R2_ACCOUNT_ID ?? "";
   const bucket = env.R2_BUCKET_NAME ?? "";
-  const expiresIn = Number(env.R2_SIGN_EXPIRES_SECONDS) || 3600;
+  const expiresIn = signExpiresSeconds(env);
 
   const client = new S3Client({
     region: "auto",
