@@ -1,3 +1,4 @@
+import { ImageGrid } from "@/components/image-grid";
 import { createR2Store } from "@/lib/r2/client";
 import {
   loadCatalog,
@@ -24,29 +25,6 @@ function Setup({ missingEnv }: { missingEnv: string[] }) {
         ))}
       </ul>
     </section>
-  );
-}
-
-function ImageGrid({ items }: { items: CatalogItem[] }) {
-  return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">
-      {items.map((item) => (
-        <li
-          key={item.key}
-          className="rounded-sm bg-kraft p-1 shadow-[2px_2px_0_0_rgb(26_20_12_/_0.45)]"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={item.url}
-            alt={item.displayName}
-            className="aspect-square w-full bg-ink/10 object-cover"
-          />
-          <p className="truncate pt-1 font-label text-[10px] uppercase tracking-wide text-ink/75">
-            {item.displayName}
-          </p>
-        </li>
-      ))}
-    </ul>
   );
 }
 
