@@ -65,7 +65,7 @@ function AudioList({ items }: { items: CatalogItem[] }) {
             controls
             preload="metadata"
             src={item.url}
-            className="h-8 w-full max-w-sm"
+            className="w-full max-w-sm"
           />
         </li>
       ))}
