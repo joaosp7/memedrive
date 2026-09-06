@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+@theme {
+  --color-mat: #1f6b4a;
+  --color-kraft: #e6d3b1;
+  --color-pencil: #f4e27a;
+  --color-ink: #1a140c;
+  --color-tape: #f2efe6;
+
+  --font-display: var(--font-syne), ui-sans-serif, sans-serif;
+  --font-body: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+/* Ruled cutting-mat surface: 1cm minor grid with a 5cm major grid. */
+@utility mat-grid {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      --alpha(var(--color-tape) / 12%) 0 1px,
+      transparent 1px 100%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      --alpha(var(--color-tape) / 12%) 0 1px,
+      transparent 1px 100%
+    ),
+    repeating-linear-gradient(
+      to right,
+      --alpha(var(--color-ink) / 18%) 0 1px,
+      transparent 1px 100%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      --alpha(var(--color-ink) / 18%) 0 1px,
+      transparent 1px 100%
+    );
+  background-size:
+    2rem 2rem,
+    2rem 2rem,
+    10rem 10rem,
+    10rem 10rem;
+}
