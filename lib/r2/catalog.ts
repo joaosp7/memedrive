@@ -45,7 +45,7 @@ export function keysFromContents(
   if (!contents) return [];
   return contents
     .map((entry) => entry.Key)
-    .filter((key): key is string => Boolean(key) && !key.endsWith("/"));
+    .filter((key): key is string => typeof key === "string" && !key.endsWith("/"));
 }
 
 export async function listAllKeys(
