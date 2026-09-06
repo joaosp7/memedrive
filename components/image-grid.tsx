@@ -57,7 +57,7 @@ export function ImageGrid({ items }: { items: CatalogItem[] }) {
             dismiss();
           }
         }}
-        className="max-h-[90vh] max-w-[90vw] border-2 border-pencil bg-ink p-3 text-tape backdrop:bg-ink/80"
+        className="m-auto max-h-[90vh] max-w-[90vw] border-2 border-pencil bg-ink p-3 text-tape backdrop:bg-ink/80"
       >
         <form method="dialog" className="mb-2 flex justify-end">
           <button
