@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   itemsFromKeys,
   keysFromContents,
@@ -43,6 +43,12 @@ describe("keysFromContents", () => {
     ).toEqual(["images/cat.png", "images/nested/dog.gif"]);
   });
 
+  it("drops empty string keys", () => {
+    expect(
+      keysFromContents([{ Key: "" }, { Key: "images/cat.png" }]),
+    ).toEqual(["images/cat.png"]);
+  });
+
   it("returns empty for undefined contents", () => {
     expect(keysFromContents(undefined)).toEqual([]);
   });
@@ -80,6 +86,22 @@ describe("itemsFromKeys", () => {
         displayName: "cat.png",
       },
     ]);
+  });
+
+  it("logs a warning naming the key and error when signing fails", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      await itemsFromKeys(["images/nope.png"], async () => {
+        throw new Error("sign failed");
+      });
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      const [message, error] = warnSpy.mock.calls[0] ?? [];
+      expect(String(message)).toContain("images/nope.png");
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe("sign failed");
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });
 

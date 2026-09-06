@@ -45,7 +45,10 @@ export function keysFromContents(
   if (!contents) return [];
   return contents
     .map((entry) => entry.Key)
-    .filter((key): key is string => typeof key === "string" && !key.endsWith("/"));
+    .filter(
+      (key): key is string =>
+        typeof key === "string" && key.length > 0 && !key.endsWith("/"),
+    );
 }
 
 export async function listAllKeys(
@@ -80,8 +83,9 @@ export async function itemsFromKeys(
         url,
         displayName: displayNameFromKey(key),
       });
-    } catch {
-      // omit keys that cannot be signed
+    } catch (error) {
+      // omit keys that cannot be signed, but surface why for diagnosis
+      console.warn(`Failed to sign key "${key}":`, error);
     }
   }
   return items;
