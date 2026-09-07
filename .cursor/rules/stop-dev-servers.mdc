@@ -1,0 +1,17 @@
+---
+description: Stop any app servers started during a session when editing is finished
+alwaysApply: true
+---
+
+# Stop app servers when finished
+
+When editing and adjusting are done, stop every app server you started in this session — frontend, backend, or both.
+
+- Tear down `next dev`, API servers, workers, and similar processes you launched.
+- Do not leave them running in the background after the task is complete.
+- Do not stop servers the user started themselves unless they asked you to.
+
+```text
+# ❌ BAD: finish the feature and leave `npm run dev` running
+# ✅ GOOD: after verification, stop the processes you started (their PIDs / terminal sessions)
+```
