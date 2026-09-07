@@ -119,6 +119,7 @@ describe("loadCatalog", () => {
     expect(catalog.missingEnv).toContain("R2_ACCOUNT_ID");
     expect(catalog.images).toEqual({ status: "ok", items: [] });
     expect(catalog.audios).toEqual({ status: "ok", items: [] });
+    expect(catalog.videos).toEqual({ status: "ok", items: [] });
   });
 
   it("keeps the other section when one prefix fails", async () => {
@@ -139,6 +140,28 @@ describe("loadCatalog", () => {
     expect(catalog.audios).toEqual({
       status: "error",
       message: "NoSuchBucket",
+    });
+  });
+
+  it("keeps images when the videos prefix fails", async () => {
+    const store: CatalogStore = {
+      listKeys: async (prefix) => {
+        if (prefix === "videos/") throw new Error("AccessDenied");
+        if (prefix === "audios/") return [];
+        return ["images/cat.png"];
+      },
+      signUrl: async (key) => `https://signed.example/${key}`,
+    };
+    const catalog = await loadCatalog(configuredEnv, store);
+    expect(catalog.configured).toBe(true);
+    expect(catalog.images.status).toBe("ok");
+    if (catalog.images.status === "ok") {
+      expect(catalog.images.items).toHaveLength(1);
+      expect(catalog.images.items[0]?.key).toBe("images/cat.png");
+    }
+    expect(catalog.videos).toEqual({
+      status: "error",
+      message: "AccessDenied",
     });
   });
 });

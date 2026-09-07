@@ -1,7 +1,18 @@
-export type MediaKind = "image" | "audio" | "unknown";
+export type MediaKind = "image" | "audio" | "video" | "unknown";
+
+export const IMAGE_PREFIX = "images/";
+export const AUDIO_PREFIX = "audios/";
+export const VIDEO_PREFIX = "videos/";
 
 const IMAGE_EXT = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "avif", "bmp", "ico"]);
 const AUDIO_EXT = new Set(["mp3", "wav", "ogg", "m4a", "aac", "flac", "oga"]);
+const VIDEO_EXT = new Set(["mp4", "webm", "mov", "m4v", "ogv"]);
+
+const KIND_BY_PREFIX: Array<[string, Exclude<MediaKind, "unknown">]> = [
+  [IMAGE_PREFIX, "image"],
+  [AUDIO_PREFIX, "audio"],
+  [VIDEO_PREFIX, "video"],
+];
 
 const CONTENT_TYPES: Record<string, string> = {
   png: "image/png",
@@ -20,6 +31,11 @@ const CONTENT_TYPES: Record<string, string> = {
   m4a: "audio/mp4",
   aac: "audio/aac",
   flac: "audio/flac",
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+  m4v: "video/x-m4v",
+  ogv: "video/ogg",
 };
 
 function extensionOf(key: string): string {
@@ -30,11 +46,13 @@ function extensionOf(key: string): string {
 }
 
 export function mediaKindFromKey(key: string): MediaKind {
-  if (key.startsWith("images/")) return "image";
-  if (key.startsWith("audios/")) return "audio";
+  for (const [prefix, kind] of KIND_BY_PREFIX) {
+    if (key.startsWith(prefix)) return kind;
+  }
   const ext = extensionOf(key);
   if (IMAGE_EXT.has(ext)) return "image";
   if (AUDIO_EXT.has(ext)) return "audio";
+  if (VIDEO_EXT.has(ext)) return "video";
   return "unknown";
 }
 
@@ -43,7 +61,8 @@ export function contentTypeFromKey(key: string): string {
 }
 
 export function displayNameFromKey(key: string): string {
-  if (key.startsWith("images/")) return key.slice("images/".length);
-  if (key.startsWith("audios/")) return key.slice("audios/".length);
+  for (const [prefix] of KIND_BY_PREFIX) {
+    if (key.startsWith(prefix)) return key.slice(prefix.length);
+  }
   return key;
 }

@@ -1,4 +1,5 @@
 import { ImageGrid } from "@/components/image-grid";
+import { VideoGrid } from "@/components/video-grid";
 import { createR2Store } from "@/lib/r2/client";
 import {
   loadCatalog,
@@ -51,6 +52,18 @@ function AudioList({ items }: { items: CatalogItem[] }) {
   );
 }
 
+function MediaItems({
+  kind,
+  items,
+}: {
+  kind: "image" | "audio" | "video";
+  items: CatalogItem[];
+}) {
+  if (kind === "image") return <ImageGrid items={items} />;
+  if (kind === "video") return <VideoGrid items={items} />;
+  return <AudioList items={items} />;
+}
+
 function MediaSection({
   title,
   emptyLabel,
@@ -60,26 +73,31 @@ function MediaSection({
   title: string;
   emptyLabel: string;
   section: CatalogSection;
-  kind: "image" | "audio";
+  kind: "image" | "audio" | "video";
 }) {
+  let body;
+  if (section.status === "error") {
+    body = (
+      <p className="rounded-sm border border-pencil/50 bg-ink/55 px-3 py-2 font-label text-sm text-pencil">
+        {section.message}
+      </p>
+    );
+  } else if (section.items.length === 0) {
+    body = (
+      <p className="font-label text-xs uppercase tracking-[0.2em] text-tape/55">
+        {emptyLabel}
+      </p>
+    );
+  } else {
+    body = <MediaItems kind={kind} items={section.items} />;
+  }
+
   return (
     <section className="rounded-sm rounded-tl-none border-2 border-ink/40 bg-ink/15 p-3">
       <h2 className="-ml-3 -mt-3 mb-3 inline-block rounded-br-sm bg-kraft px-4 py-1.5 font-display text-sm font-extrabold uppercase tracking-[0.25em] text-ink">
         {title}
       </h2>
-      {section.status === "error" ? (
-        <p className="rounded-sm border border-pencil/50 bg-ink/55 px-3 py-2 font-label text-sm text-pencil">
-          {section.message}
-        </p>
-      ) : section.items.length === 0 ? (
-        <p className="font-label text-xs uppercase tracking-[0.2em] text-tape/55">
-          {emptyLabel}
-        </p>
-      ) : kind === "image" ? (
-        <ImageGrid items={section.items} />
-      ) : (
-        <AudioList items={section.items} />
-      )}
+      {body}
     </section>
   );
 }
@@ -101,6 +119,12 @@ export default async function HomePage() {
         emptyLabel="No images in images/"
         section={catalog.images}
         kind="image"
+      />
+      <MediaSection
+        title="Videos"
+        emptyLabel="No videos in videos/"
+        section={catalog.videos}
+        kind="video"
       />
       <MediaSection
         title="Audios"
