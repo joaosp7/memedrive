@@ -1,7 +1,12 @@
-import { contentTypeFromKey, displayNameFromKey } from "./media";
+import {
+  AUDIO_PREFIX,
+  IMAGE_PREFIX,
+  VIDEO_PREFIX,
+  contentTypeFromKey,
+  displayNameFromKey,
+} from "./media";
 
-export const IMAGE_PREFIX = "images/";
-export const AUDIO_PREFIX = "audios/";
+export { AUDIO_PREFIX, IMAGE_PREFIX, VIDEO_PREFIX };
 
 export const REQUIRED_R2_ENV = [
   "R2_ACCOUNT_ID",
@@ -26,6 +31,7 @@ export type Catalog = {
   missingEnv: string[];
   images: CatalogSection;
   audios: CatalogSection;
+  videos: CatalogSection;
 };
 
 export type CatalogStore = {
@@ -116,13 +122,15 @@ export async function loadCatalog(
       missingEnv,
       images: { status: "ok", items: [] },
       audios: { status: "ok", items: [] },
+      videos: { status: "ok", items: [] },
     };
   }
 
-  const [images, audios] = await Promise.all([
+  const [images, audios, videos] = await Promise.all([
     loadSection(IMAGE_PREFIX, store),
     loadSection(AUDIO_PREFIX, store),
+    loadSection(VIDEO_PREFIX, store),
   ]);
 
-  return { configured: true, missingEnv: [], images, audios };
+  return { configured: true, missingEnv: [], images, audios, videos };
 }
