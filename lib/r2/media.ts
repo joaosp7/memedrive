@@ -66,3 +66,22 @@ export function displayNameFromKey(key: string): string {
   }
   return key;
 }
+
+// Seek slightly past the start so the poster frame is a real frame rather than
+// a black leader frame some encoders place at t=0.
+export const VIDEO_THUMBNAIL_TIME_SECONDS = 0.1;
+
+/**
+ * Builds a thumbnail URL for a video by attaching a media-fragment start time,
+ * so a `<video>` element renders that frame as its poster without playback.
+ * The fragment is client-only and is not sent to R2, so it never affects the
+ * presigned signature. Any existing fragment is replaced.
+ */
+export function videoThumbnailUrl(
+  url: string,
+  seconds: number = VIDEO_THUMBNAIL_TIME_SECONDS,
+): string {
+  const hashIndex = url.indexOf("#");
+  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  return `${base}#t=${seconds}`;
+}

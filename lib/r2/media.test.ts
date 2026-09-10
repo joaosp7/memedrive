@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  VIDEO_THUMBNAIL_TIME_SECONDS,
   contentTypeFromKey,
   displayNameFromKey,
   mediaKindFromKey,
+  videoThumbnailUrl,
 } from "./media";
 
 describe("mediaKindFromKey", () => {
@@ -75,5 +77,33 @@ describe("displayNameFromKey", () => {
 
   it("returns the key when no known prefix is present", () => {
     expect(displayNameFromKey("loose.png")).toBe("loose.png");
+  });
+});
+
+describe("videoThumbnailUrl", () => {
+  it("appends a media-fragment start time using the default", () => {
+    expect(videoThumbnailUrl("https://r2.example/videos/clip.mp4")).toBe(
+      `https://r2.example/videos/clip.mp4#t=${VIDEO_THUMBNAIL_TIME_SECONDS}`,
+    );
+  });
+
+  it("preserves the presigned query string untouched", () => {
+    const signed =
+      "https://r2.example/videos/clip.mp4?X-Amz-Signature=abc&X-Amz-Expires=3600";
+    expect(videoThumbnailUrl(signed)).toBe(
+      `${signed}#t=${VIDEO_THUMBNAIL_TIME_SECONDS}`,
+    );
+  });
+
+  it("accepts a custom start time", () => {
+    expect(videoThumbnailUrl("https://r2.example/videos/clip.mp4", 2)).toBe(
+      "https://r2.example/videos/clip.mp4#t=2",
+    );
+  });
+
+  it("replaces an existing fragment rather than stacking one", () => {
+    expect(videoThumbnailUrl("https://r2.example/videos/clip.mp4#t=9", 1)).toBe(
+      "https://r2.example/videos/clip.mp4#t=1",
+    );
   });
 });
