@@ -1,0 +1,17 @@
+{
+  "name": "MemeDrive",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev",
+      "description": "Next.js 16 dev server on http://localhost:3000. The app renders a setup screen until the R2_* variables are provided."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ]
+}
