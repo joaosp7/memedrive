@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CatalogItem } from "@/lib/r2/catalog";
+import { videoThumbnailUrl } from "@/lib/r2/media";
 import { isDialogBackdropClick } from "./dialog-backdrop";
 
 export function VideoGrid({ items }: { items: CatalogItem[] }) {
@@ -36,11 +37,22 @@ export function VideoGrid({ items }: { items: CatalogItem[] }) {
               aria-label={item.displayName}
               className="block w-full cursor-pointer border-0 bg-transparent p-0"
             >
-              <span className="flex aspect-square w-full items-center justify-center bg-ink/10">
+              <span className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-ink/10">
+                <video
+                  src={videoThumbnailUrl(item.url)}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="pointer-events-none h-full w-full object-cover"
+                />
                 <span
                   aria-hidden="true"
-                  className="ml-0.5 h-0 w-0 border-y-[7px] border-l-[12px] border-y-transparent border-l-ink/70"
-                />
+                  className="pointer-events-none absolute flex h-7 w-7 items-center justify-center rounded-full bg-ink/55 ring-1 ring-tape/40"
+                >
+                  <span className="ml-0.5 h-0 w-0 border-y-[6px] border-l-[10px] border-y-transparent border-l-tape" />
+                </span>
               </span>
             </button>
             <p className="truncate pt-1 font-label text-[10px] uppercase tracking-wide text-ink/75">
